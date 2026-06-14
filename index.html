@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meus Scripts de Automação</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1117;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1d2e;
+      border-bottom: 1px solid #2a2d3e;
+      padding: 24px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      color: #fff;
+    }
+
+    header span {
+      font-size: 1.8rem;
+    }
+
+    .subtitle {
+      color: #888;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    .search-bar {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 8px;
+      border: 1px solid #2a2d3e;
+      background: #1a1d2e;
+      color: #e0e0e0;
+      font-size: 1rem;
+      margin-bottom: 32px;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .search-bar:focus {
+      border-color: #5c6bc0;
+    }
+
+    .tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .tag {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #2a2d3e;
+      background: #1a1d2e;
+      color: #aaa;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tag:hover, .tag.active {
+      background: #5c6bc0;
+      border-color: #5c6bc0;
+      color: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #1a1d2e;
+      border: 1px solid #2a2d3e;
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      border-color: #5c6bc0;
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .card-icon {
+      font-size: 1.4rem;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: #888;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: #252840;
+      color: #7986cb;
+      border: 1px solid #3a3f6e;
+    }
+
+    .btn-copy {
+      background: none;
+      border: 1px solid #3a3f6e;
+      color: #aaa;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-copy:hover {
+      background: #5c6bc0;
+      border-color: #5c6bc0;
+      color: #fff;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: #1a1d2e;
+      border: 1px solid #2a2d3e;
+      border-radius: 14px;
+      padding: 28px;
+      width: 90%;
+      max-width: 640px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal h2 {
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .modal pre {
+      background: #0f1117;
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: #a5d6a7;
+      overflow-x: auto;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      white-space: pre-wrap;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background: #5c6bc0;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 20px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      background: #252840;
+      color: #aaa;
+      border: 1px solid #3a3f6e;
+      border-radius: 8px;
+      padding: 9px 20px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .empty {
+      text-align: center;
+      color: #555;
+      margin-top: 60px;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span>⚙️</span>
+  <div>
+    <h1>Meus Scripts de Automação</h1>
+    <div class="subtitle">Coleção pessoal de scripts úteis</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <input
+    class="search-bar"
+    type="text"
+    id="search"
+    placeholder="🔍 Buscar scripts..."
+    oninput="renderCards()"
+  />
+
+  <div class="tags" id="tags"></div>
+
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none">Nenhum script encontrado.</div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <h2 id="modal-title"></h2>
+    <pre id="modal-code"></pre>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModalBtn()">Fechar</button>
+      <button class="btn-primary" onclick="copyModal()">📋 Copiar código</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // =============================================
+  // ADICIONE SEUS SCRIPTS AQUI
+  // =============================================
+  const scripts = [
+    {
+      title: "Backup de Arquivos",
+      icon: "💾",
+      desc: "Copia automaticamente arquivos de uma pasta para outra com timestamp.",
+      tag: "Python",
+      code: `import shutil, os
+from datetime import datetime
+
+origem = "/home/usuario/documentos"
+destino = f"/home/usuario/backup_{datetime.now().strftime('%Y%m%d')}"
+
+shutil.copytree(origem, destino)
+print(f"Backup feito em: {destino}")`
+    },
+    {
+      title: "Renomear Arquivos em Lote",
+      icon: "📁",
+      desc: "Renomeia todos os arquivos de uma pasta adicionando um prefixo.",
+      tag: "Python",
+      code: `import os
+
+pasta = "/home/usuario/fotos"
+prefixo = "viagem_"
+
+for nome in os.listdir(pasta):
+    novo = prefixo + nome
+    os.rename(
+        os.path.join(pasta, nome),
+        os.path.join(pasta, novo)
+    )
+    print(f"{nome} → {novo}")`
+    },
+    {
+      title: "Verificar Sites Online",
+      icon: "🌐",
+      desc: "Checa se uma lista de sites está respondendo e registra o resultado.",
+      tag: "Python",
+      code: `import requests
+
+sites = [
+    "https://google.com",
+    "https://github.com",
+    "https://meusite.com"
+]
+
+for site in sites:
+    try:
+        r = requests.get(site, timeout=5)
+        status = "✅ Online" if r.status_code == 200 else "⚠️ Erro"
+    except:
+        status = "❌ Offline"
+    print(f"{site}: {status}")`
+    },
+    {
+      title: "Limpar Arquivos Antigos",
+      icon: "🗑️",
+      desc: "Remove arquivos com mais de N dias de uma pasta específica.",
+      tag: "Bash",
+      code: `#!/bin/bash
+PASTA="/tmp/logs"
+DIAS=30
+
+find "$PASTA" -type f -mtime +$DIAS -exec rm -f {} \\;
+echo "Arquivos com mais de $DIAS dias removidos de $PASTA"`
+    },
+    {
+      title: "Monitorar Uso de CPU",
+      icon: "📊",
+      desc: "Exibe o uso de CPU a cada 5 segundos no terminal.",
+      tag: "Bash",
+      code: `#!/bin/bash
+while true; do
+    echo "$(date '+%H:%M:%S') - CPU: $(top -bn1 | grep 'Cpu(s)' | awk '{print $2}')%"
+    sleep 5
+done`
+    },
+    {
+      title: "Enviar E-mail Automático",
+      icon: "📧",
+      desc: "Envia um e-mail simples via SMTP com Python.",
+      tag: "Python",
+      code: `import smtplib
+from email.mime.text import MIMEText
+
+remetente = "seu@email.com"
+destinatario = "destino@email.com"
+senha = "sua_senha"
+
+msg = MIMEText("Olá! Este é um e-mail automático.")
+msg['Subject'] = "Automação"
+msg['From'] = remetente
+msg['To'] = destinatario
+
+with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+    smtp.login(remetente, senha)
+    smtp.send_message(msg)
+    print("E-mail enviado!")`
+    }
+  ];
+  // =============================================
+
+  let activeTag = "Todos";
+
+  function getTags() {
+    const todas = scripts.map(s => s.tag);
+    return ["Todos", ...new Set(todas)];
+  }
+
+  function renderTags() {
+    const container = document.getElementById("tags");
+    container.innerHTML = "";
+    getTags().forEach(t => {
+      const el = document.createElement("span");
+      el.className = "tag" + (t === activeTag ? " active" : "");
+      el.textContent = t;
+      el.onclick = () => { activeTag = t; renderTags(); renderCards(); };
+      container.appendChild(el);
+    });
+  }
+
+  function renderCards() {
+    const q = document.getElementById("search").value.toLowerCase();
+    const grid = document.getElementById("grid");
+    const empty = document.getElementById("empty");
+    grid.innerHTML = "";
+
+    const filtrados = scripts.filter(s => {
+      const matchTag = activeTag === "Todos" || s.tag === activeTag;
+      const matchQ = s.title.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q);
+      return matchTag && matchQ;
+    });
+
+    if (filtrados.length === 0) {
+      empty.style.display = "block";
+      return;
+    }
+    empty.style.display = "none";
+
+    filtrados.forEach((s, i) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="card-icon">${s.icon}</span>
+          <span class="card-title">${s.title}</span>
+        </div>
+        <div class="card-desc">${s.desc}</div>
+        <div class="card-footer">
+          <span class="badge">${s.tag}</span>
+          <button class="btn-copy" onclick="event.stopPropagation(); copyCode(${scripts.indexOf(s)})">📋 Copiar</button>
+        </div>
+      `;
+      card.onclick = () => openModal(scripts.indexOf(s));
+      grid.appendChild(card);
+    });
+  }
+
+  function openModal(i) {
+    const s = scripts[i];
+    document.getElementById("modal-title").textContent = s.icon + " " + s.title;
+    document.getElementById("modal-code").textContent = s.code;
+    document.getElementById("modal").dataset.idx = i;
+    document.getElementById("modal").classList.add("open");
+  }
+
+  function closeModal(e) {
+    if (e.target.id === "modal") closeModalBtn();
+  }
+
+  function closeModalBtn() {
+    document.getElementById("modal").classList.remove("open");
+  }
+
+  function copyModal() {
+    const i = document.getElementById("modal").dataset.idx;
+    navigator.clipboard.writeText(scripts[i].code);
+    alert("Código copiado!");
+  }
+
+  function copyCode(i) {
+    navigator.clipboard.writeText(scripts[i].code);
+    alert("Código copiado!");
+  }
+
+  renderTags();
+  renderCards();
+</script>
+
+</body>
+</html>
